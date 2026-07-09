@@ -1,0 +1,35 @@
+[
+  {
+    "file": "main.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "main.cpp",
+      "-o",
+      "web"
+    ],
+    "directory": "/run/media/filip/USB STICK/Projekti/Web",
+    "output": "web"
+  },
+  {
+    "file": "http.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "http.cpp",
+      "-o",
+      "web"
+    ],
+    "directory": "/run/media/filip/USB STICK/Projekti/Web",
+    "output": "web"
+  },
+  {
+    "file": "tokenizer.cpp",
+    "arguments": [
+      "/usr/bin/g++",
+      "tokenizer.cpp",
+      "-o",
+      "web"
+    ],
+    "directory": "/run/media/filip/USB STICK/Projekti/Web",
+    "output": "web"
+  }
+]
