@@ -1,3 +1,4 @@
+#include "css.h"
 #include "dom.h"
 #include "http.h"
 #include "tokenizer.h"
@@ -5,47 +6,45 @@
 
 using namespace std;
 
+string extractCSS(const Node *node) {
+  if (!node)
+    return "";
+  string css = "";
+
+  if (node->type == NodeType::ELEMENT && node->tagName == "style") {
+    for (const auto &child : node->children) {
+      if (child->type == NodeType::TEXT)
+        css += child->text;
+    }
+  }
+
+  for (const auto &child : node->children)
+    css += extractCSS(child.get());
+
+  return css;
+}
+
 int main() {
   string url;
   cout << "Unesite URL: ";
   cin >> url;
 
-  // skini html
   string html = httpGet(url);
-
-  // tokenizuj
   vector<Token> tokens = tokenize(html);
+  auto dom = buildDOM(tokens);
 
-  /*for (const Token &t : tokens) {
-    switch (t.type) {
-    case TokenType::OPEN_TAG:
-      cout << "[OPEN] <" << t.tagName << ">";
-      // ispisi atribute ako postoje
-      for (const auto &attr : t.attributes)
-        cout << " " << attr.first << "=\"" << attr.second << "\"";
-      cout << "\n";
-      break;
-    case TokenType::CLOSE_TAG:
-      cout << "[CLOSE] </" << t.tagName << ">\n";
-      break;
-    case TokenType::TEXT:
-      cout << "[TEXT] " << t.text << "\n";
-      break;
-    case TokenType::SELF_CLOSING:
-      cout << "[SELF] </" << t.tagName << "/>\n";
-      break;
-    case TokenType::COMMENT:
-      cout << "[COMMENT]\n";
-      break;
-    case TokenType::DOCTYPE:
-      cout << "[DOCTYPE]\n";
-      break;
-    }
+  string cssText = extractCSS(dom.get());
+  auto cssRules = parseCSS(cssText);
+
+  cout << "Pronadjeno CSS pravila: " << cssRules.size() << "\n";
+  for (const auto &rule : cssRules) {
+    cout << " " << rule.selector << " { ";
+    for (const auto &prop : rule.properties)
+      cout << prop.first << ": " << prop.second << "; ";
+    cout << "}\n";
   }
 
-  cout << "\nUkupno tokena: " << tokens.size() << "\n";*/
-
-  unique_ptr<Node> dom = buildDOM(tokens);
+  applyStyles(dom.get(), cssRules);
 
   printDOM(dom.get());
 
